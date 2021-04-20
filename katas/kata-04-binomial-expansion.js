@@ -1,121 +1,106 @@
 const expand = (ecuacion) => {
-    const eqParsed = parseEquation(ecuacion)
-    const eqExpanded  =  expandBinomio(eqParsed)
-    const eqFormated = printEquationTxt(eqExpanded)
-
-    return eqFormated
-}
+    const eqParsed = parseEquation(ecuacion);
+    const eqExpanded  =  expandBinomio(eqParsed);
+    const eqFormated = printEquationTxt(eqExpanded);
+    
+    return eqFormated;
+};
 
 const parseEquation = (ecuacion) => {  
-    let [entrada, polinomio, potencia] = ecuacion.match(/\((.*?)\)\^(\d+)$/)
+    let [, binomio, potencia] = ecuacion.match(/\((.*?)\)\^(\d+)$/);
 
-    let ecuacionParseada = {
-        entrada,
-        polinomio,
-        potencia
-    }
-    
-    ecuacionParseada.terminos = ecuacionParseada.polinomio.split(/(?=\+|-)/).map((termino) => parseTerm(termino))
-    return ecuacionParseada
-}
+    let terminos = binomio.split(/(?=\+|-)/).map(
+        (termino) => {
+            let [, signo = '+', coeficiente = 1, variable, exponente = 1] = termino.match(/^([\+-]?)(\d+)?([a-z])?\^?(\d+)?$/);
 
-const parseTerm = (term) => {
-    const elementos = term.match(/^([\+-]?)(\d+)?([a-z])?\^?(\d+)?$/)
+            signo = !signo ? '+' : signo;
+            coeficiente = parseInt(coeficiente);
+            exponente = !!variable ? parseInt(exponente) : undefined;
 
-    let termino = {}
-    termino.signo = !elementos[1] ? '+' : elementos[1]
-    termino.coeficiente = isNaN(parseInt(elementos[2])) ? 1 : parseInt(elementos[2])
-    if(!!elementos[3]){
-        termino.variable = elementos[3]
-        termino.exponente = isNaN(parseInt(elementos[4])) ? 1 : parseInt(elementos[4])
-    }
+            return { signo, coeficiente, variable, exponente };
+    });
 
-    return termino
-}
+    return { potencia, terminos };
+};
 
 const expandBinomio = (ecuacion) => {
-    const terminoa = ecuacion.terminos[0]
-    const terminob = ecuacion.terminos[1]
-    let pa = ecuacion.potencia;
-    let pb = 0;
+    const [terminoa, terminob] = ecuacion.terminos;
+    let pota = ecuacion.potencia;
+    let potb = 0;
 
-    let eqexpandida = []
+    let eqexpandida = calculaTrianguloPascal(ecuacion.potencia)
+        .map((coefPasc) => {
+            const potTermA = calculaPotenciaTermino(terminoa, pota);
+            const potTermB = calculaPotenciaTermino(terminob, potb);
 
-    const pascal = calculaTrianguloPascal(ecuacion.potencia)
-    pascal.forEach((pasc) => {
-        let potTermA = calculaPotenciaTermino(terminoa, pa)
-        let potTermB = calculaPotenciaTermino(terminob, pb)
+            pota--;
+            potb++;
+            return multiplicaTerminos(potTermA, potTermB, coefPasc); 
+    });
 
-        eqexpandida.push(multiplicaTerminos(potTermA, potTermB, pasc))
-        pa--;
-        pb++;
-    })
-
-    eqexpandida.sort((a,b) => {
-        return a.exponente > (b.exponente ?? 0) ? 1 : -1
-    })
-    eqexpandida.reverse()
+    eqexpandida.sort((a,b) => a.exponente > (b.exponente ?? 0) ? 1 : -1);
+    eqexpandida.reverse();
     
-    return eqexpandida
-}
+    return eqexpandida;
+};
 
 const calculaTrianguloPascal = (potencia) => {
     let renglon = [1]; 
-    let rs = []; 
+    let rsiguiente = []; 
 
     for( i=0; i<potencia; i++){
-        rs = [0].concat(renglon).concat(0).map((e,i,a) =>  e + a[i+1])
-        rs.splice(rs.length-1,1)
-        renglon = rs
+        rsiguiente = [0, ...renglon, 0].map((e,i,a) =>  e + a[i+1])
+        rsiguiente.splice(rsiguiente.length-1,1)
+        renglon = rsiguiente
     }
     
     return renglon;
-}
+};
 
 const calculaPotenciaTermino = (termino, potencia) => {
-    let result = {}
+    let result = {};
     
-    result.signo = (termino.signo === '-' && potencia % 2 !== 0) ? '-' : '+'
-    result.coeficiente = Math.pow(termino.coeficiente, potencia)
+    result.signo = (termino.signo === '-' && potencia % 2 !== 0) ? '-' : '+';
+    result.coeficiente = Math.pow(termino.coeficiente, potencia);
     if(!!termino.variable && potencia > 0){
-        result.variable = termino.variable
-        result.exponente = termino.exponente * potencia
+        result.variable = termino.variable;
+        result.exponente = termino.exponente * potencia;
     }
 
-    return result
-}
+    return result;
+};
 
 const multiplicaTerminos = (terminoa, terminob, pascal) => {   
     if(terminoa.coeficiente === 0 || terminob.coeficiente === 0){
-        return { coeficiente: 0}
+        return { coeficiente: 0};
     }
 
-    let signo = (terminoa.signo === terminob.signo) ? '+' : '-'
-    let coeficiente = terminoa.coeficiente * terminob.coeficiente * pascal
-    let {variable, exponente} = (!!terminoa.variable) ? terminoa : terminob
+    let signo = (terminoa.signo === terminob.signo) ? '+' : '-';
+    let coeficiente = terminoa.coeficiente * terminob.coeficiente * pascal;
+    let {variable, exponente} = (!!terminoa.variable) ? terminoa : terminob;
 
     return {
         signo, 
         coeficiente,
         variable,
         exponente
-    }
-}
+    };
+};
 
 const printEquationTxt = (ecuacion) => {
-    let ecuacionTexto = ''
+    let ecuacionTexto = '';
 
     for(t of ecuacion){
         if(t.coeficiente === 0)
-            break;
+            continue;
             
-        ecuacionTexto += ((!ecuacionTexto && t.signo === '-') || (!!ecuacionTexto)) ? t.signo : ''
-        ecuacionTexto += (t.coeficiente != 1 || !t.variable) ? t.coeficiente : ''
-        ecuacionTexto += (t.variable) ? t.variable : ''
-        ecuacionTexto += (t.variable && t.exponente > 1) ? '^' + t.exponente : ''
+        ecuacionTexto += ((!ecuacionTexto && t.signo === '-') || (!!ecuacionTexto)) ? t.signo : '';
+        ecuacionTexto += (t.coeficiente != 1 || !t.variable) ? t.coeficiente : '';
+        ecuacionTexto += (t.variable) ? t.variable : '';
+        ecuacionTexto += (t.variable && t.exponente > 1) ? '^' + t.exponente : '';
     }
 
-    return ecuacionTexto
+    return ecuacionTexto;
 }
 
-module.exports = { expand }
+module.exports = { expand };
