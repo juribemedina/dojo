@@ -72,6 +72,7 @@ expand("(-x-1)^2");// returns "x^2+2x+1"
 ## Solución
 
 La solución está en el siguiente [script](../katas/kata-04-binomial-expansion.js)
+
 Para solucionar el problema se procedió a determinar las siguientes actividades:
 
 1. Parsear la entrada
