@@ -1,4 +1,4 @@
-# Kata 04 binomial Expansion
+# Kata 04 Binomial Expansion
 
 ## Contenido
 
@@ -59,7 +59,7 @@ expand("(-x-1)^2");// returns "x^2+2x+1"
 
 [![VIDEO 2](https://img.youtube.com/vi/LYWDsj09WqI/0.jpg)](https://www.youtube.com/watch?v=LYWDsj09WqI)
 
-![VIDEO 2](https://img.youtube.com/vi/MM6M-BtVsLU/0.jpg)](https://www.youtube.com/watch?v=MM6M-BtVsLU)
+[![VIDEO 2](https://img.youtube.com/vi/MM6M-BtVsLU/0.jpg)](https://www.youtube.com/watch?v=MM6M-BtVsLU)
 
 ### Partes de un término algebráico
 
@@ -109,7 +109,7 @@ Finalmente cabe destacar que el parser puede irse extendiendo de forma gradual p
 
 ### Expandir el Binomio
 
-Para resolver la parte fundamental del ejercicio se decidió realizar el procedimiento que se muestra en la imagen del [Triángulo de Pascal](#triángulo-de-pascal), que de forma general se resume en.
+Para resolver la parte fundamental del ejercicio se decidió realizar el procedimiento que se muestra en la imagen del [Triángulo de Pascal](#triángulo-de-pascal), que de forma general se resume en:
 
 1. Calcular el renglón del triángulo de pascal que corresponde a la potencia a elevar el binomio.
 2. Por cada coeficiente del triángulo de pascal.
