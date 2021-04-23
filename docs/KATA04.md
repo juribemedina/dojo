@@ -71,6 +71,8 @@ expand("(-x-1)^2");// returns "x^2+2x+1"
 
 ## Solución
 
+La solución está en el siguiente [script](../katas/kata-04-binomial-expansion.js)
+
 Para solucionar el problema se procedió a determinar las siguientes actividades:
 
 1. Parsear la entrada
@@ -113,8 +115,8 @@ Para resolver la parte fundamental del ejercicio se decidió realizar el procedi
 
 1. Calcular el renglón del triángulo de pascal que corresponde a la potencia a elevar el binomio.
 2. Por cada coeficiente del triángulo de pascal.
-   2.1 Elevar a la potencia que le corresponde los términos `a` y `b`, considerando que la potencia del término `a` empieza en `n` e irá disminuyendo, mientras que la potencia del término `b` comienza en `0`e irá incrementándose.
-   2.2 Multiplicar los términos `a` ,`b` y el coeficiente del triángulo de pascal.
+   - Elevar a la potencia que le corresponde los términos `a` y `b`, considerando que la potencia del término `a` empieza en `n` e irá disminuyendo, mientras que la potencia del término `b` comienza en `0`e irá incrementándose.
+   - Multiplicar los términos `a` ,`b` y el coeficiente del triángulo de pascal.
 3. Ordenar el resultado de acuerdo a la potencia de la variable en forma descendente.
 
 ### Formatear la Salida
